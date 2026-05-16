@@ -32,7 +32,8 @@ def custom_shap_rfecv(X_train, y_train, cv_splits=5, step=1):
             y_tr, y_val = y_train.iloc[train_idx], y_train.iloc[val_idx]
             
             # Train model
-            model = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+            #model = xgb.XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+            model = xgb.XGBClassifier(eval_metric='logloss', random_state=42)
             model.fit(X_tr, y_tr)
             
             # Score

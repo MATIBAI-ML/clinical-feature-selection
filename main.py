@@ -4,19 +4,25 @@ from src.modeling import perform_train_test_split, custom_shap_rfecv
 
 def run_pipeline():
     # 0. Load Data (Replace with your actual data loading)
-    # df = pd.read_csv('data/raw/clinical_data.csv')
+    df = pd.read_csv('data/raw/mdlon.csv')
     
     # --- Dummy Data for demonstration ---
     print("Loading data...")
     import numpy as np
     np.random.seed(42)
-    df = pd.DataFrame(np.random.rand(200, 20), columns=[f'feature_{i}' for i in range(20)])
-    df['target'] = np.random.randint(0, 2, 200)
-    df['zero_var_feature'] = 1  # Add a dummy zero-variance feature
+    # df = pd.DataFrame(np.random.rand(200, 20), columns=[f'feature_{i}' for i in range(20)])
+    # df['target'] = np.random.randint(0, 2, 200)
+    # df['zero_var_feature'] = 1  # Add a dummy zero-variance feature
     # ------------------------------------
 
-    X = df.drop(columns=['target'])
-    y = df['target']
+    # X = df.drop(columns=['target'])
+    # y = df['target']
+    
+    X = df.drop(columns=['T'])
+    y = df['T']
+    y = y.replace(-1, 0)
+    print(y)
+    
 
     # Step 1: Variance Pre-filtering
     X_filtered = drop_low_variance_features(X, threshold=0.0)
@@ -31,6 +37,7 @@ def run_pipeline():
     # Step 3: Train-Test Split
     X_train, X_test, y_train, y_test = perform_train_test_split(X_filtered, y)
     
+    #for specifici run case
     # Step 4: SHAP-RFECV
     optimal_features, cv_history = custom_shap_rfecv(X_train, y_train, cv_splits=5, step=1)
     
@@ -39,7 +46,7 @@ def run_pipeline():
     print("Exporting optimized feature subset for clinician review...")
     
     final_subset_df = X_train[optimal_features]
-    # final_subset_df.to_csv('data/processed/optimal_features_for_review.csv', index=False)
+    final_subset_df.to_csv('data/processed/optimal_features_for_review.csv', index=False)
     
     print("Pipeline completed successfully. Please check data/processed/ for outputs.")
 
